@@ -12,7 +12,7 @@
 
 ## 🧸 Sobre o Projeto
 
-A **Lojinha Fofa** é um aplicativo de vendas que vamos desenvolver durante nossas aulas de Flutter. Ele permite:
+A **Lojinha** é um aplicativo de vendas que vamos desenvolver durante nossas aulas de Flutter. Ele permite:
 
 - Cadastrar produtos  🛍️
 - Adicionar ao carrinho 🛒
@@ -30,7 +30,7 @@ Tudo isso enquanto aprendemos conceitos importantes como:
 
 ## ✨ Funcionalidades
 
-| Ícone | Funcionalidade | Descrição |
+|  | Funcionalidade | Descrição |
 |-------|----------------|-----------|
 | 🛍️ | **Lista de produtos** | Veja todos os produtos disponíveis na lojinha |
 | ➕ | **Cadastrar produtos** | Adicione novos itens fofos ao catálogo |
@@ -83,14 +83,13 @@ Siga os passos abaixo:
 ## 💖 Contribuindo
 
 Quer ajudar a deixar a Lojinha mais commpletinha?
- 
+
 - Reporte problemas em [Issues](https://github.com/seu-usuario/lojinha-fofa/issues)  
 - Envie sugestões via Pull Request  
 
 Toda contribuição será bem recebida! 😊
 
----
 
-## 📄 Licença
+<!-- ## 📄 Licença
 
-Este projeto é licenciado sob a **MIT License** – veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto é licenciado sob a **MIT License** – veja o arquivo [LICENSE](LICENSE) para detalhes. -->
