@@ -1,5 +1,6 @@
 # 🎀 Lojinha 🎀
-### Um projeto feito para minhas alunas e alunos!
+
+## Um projeto feito para minhas alunas e alunos
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.29-ff69b4?style=for-the-badge&logo=flutter&logoColor=white&labelColor=ffb6c1)
 ![Supabase](https://img.shields.io/badge/Supabase-FFC0CB?style=for-the-badge&logo=supabase&logoColor=white&labelColor=ffb6c1)
@@ -20,6 +21,7 @@ A **Lojinha** é um aplicativo de vendas que vamos desenvolver durante nossas au
 - Ver a localização da lojinha no mapa 🗺️
 
 Tudo isso enquanto aprendemos conceitos importantes como:
+
 - Widgets e navegação
 - Gerenciamento de estado com Provider
 - Integração com Supabase
@@ -30,15 +32,15 @@ Tudo isso enquanto aprendemos conceitos importantes como:
 
 ## ✨ Funcionalidades
 
-|  | Funcionalidade | Descrição |
-|-------|----------------|-----------|
-| 🛍️ | **Lista de produtos** | Veja todos os produtos disponíveis na lojinha |
-| ➕ | **Cadastrar produtos** | Adicione novos itens fofos ao catálogo |
-| ✏️ | **Editar produtos** | Atualize informações dos produtos |
-| 🛒 | **Carrinho de compras** | Adicione e remova itens com um clique |
-| 💳 | **Finalizar pedido** | Com notificação de confirmação! |
-| 🗺️ | **Mapa da loja** | Veja a localização da lojinha (usando WebView) |
-| 🔔 | **Notificações locais** | Receba um aviso quando o pedido for confirmado |
+|    | Funcionalidade             | Descrição                                     |
+|----|----------------------------|-----------------------------------------------|
+| 🛍️ | **Lista de produtos**      | Veja todos os produtos disponíveis na lojinha |
+| ➕ | **Cadastrar produtos**     | Adicione novos itens fofos ao catálogo        |
+| ✏️ | **Editar produtos**        | Atualize informações dos produtos             |
+| 🛒 | **Carrinho de compras**    | Adicione e remova itens com um clique         |
+| 💳 | **Finalizar pedido**       | Com notificação de confirmação!               |
+| 🗺️ | **Mapa da loja**           | Veja a localização da lojinha (usando WebView)|
+| 🔔 | **Notificações locais**    | Receba um aviso quando o pedido for confirmado|
 
 (Ainda estamos construindo mais funcionalidades, fique de olho! 😉)
 
@@ -49,16 +51,19 @@ Tudo isso enquanto aprendemos conceitos importantes como:
 Siga os passos abaixo:
 
 1. **Clone o repositório**
+
    ```bash
    git clone https://github.com/LeticiaPavao/app_lojinha.git
    ```
 
 2. **Entre na pasta**
+
    ```bash
    cd app_lojinha
    ```
 
 3. **Instale as dependências**
+
    ```bash
    flutter pub get
    ```
@@ -68,12 +73,13 @@ Siga os passos abaixo:
    - Copie a URL e a chave anônima
    - Crie um arquivo `.env` na raiz com:
 
-     ```
-     API_URL=https://exemplo.com
-     API_KEY=sua-chave-aqui
-     ```
+      ```text
+      API_URL=https://exemplo.com
+      API_KEY=sua-chave-aqui
+      ```
 
 5. **Rode o app**
+
    ```bash
    flutter run
    ```
@@ -88,7 +94,6 @@ Quer ajudar a deixar a Lojinha mais commpletinha?
 - Envie sugestões via Pull Request  
 
 Toda contribuição será bem recebida! 😊
-
 
 <!-- ## 📄 Licença
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin _notifications =
@@ -50,17 +51,22 @@ class NotificationService {
   }
 
   Future<bool> requestPermissions() async {
+    bool granted = false;
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       final result = await _notifications
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.requestPermissions(alert: true, badge: true, sound: true);
-
-      return result ?? false;
+      granted = result ?? false;
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      
+      final status = await Permission.notification.request();
+      granted = status.isGranted;
     }
 
-    return false;
+    return granted;
   }
 
   Future<void> showNotification({

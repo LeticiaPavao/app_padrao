@@ -50,10 +50,10 @@ class CartProvider extends ChangeNotifier {
           'order_id': orderId,
           'product_id': item.id,
           'product_name': item.name,
-          'quantity': 1, // TODO: permitir escolher quantidade
+          'quantity': 1, 
           'unit_price': item.price,
           'subtotal':
-              item.price, // TODO: calcular subtotal com base na quantidade
+              item.price,
         };
       }).toList();
 

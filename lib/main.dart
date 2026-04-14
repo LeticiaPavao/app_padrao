@@ -1,6 +1,7 @@
 //& Imports packages
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
@@ -8,6 +9,7 @@ import 'package:webview_flutter_web/webview_flutter_web.dart';
 import 'package:provider/provider.dart';
 import 'package:app_lojinha/providers/auth_provider.dart';
 import 'package:app_lojinha/providers/cart_provider.dart';
+import 'package:app_lojinha/views/auth/reset_password.dart';
 //& Imports views
 import 'home_page.dart';
 import 'package:app_lojinha/views/auth/login_page.dart';
@@ -31,6 +33,8 @@ void main() async {
 
   WebViewPlatform.instance = WebWebViewPlatform();
 
+  SupabaseErrorTranslator.setLanguage(SupportedLanguage.pt);
+
   runApp(
     MultiProvider(
       providers: [
@@ -49,13 +53,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'App de Vendas',
+      locale: const Locale('pt', 'BR'),
       theme: ThemeData(primarySwatch: Colors.purple),
-      initialRoute: '/login',
+      initialRoute: '/home',
       routes: {
         '/login': (context) => LoginPage(),
         '/cadastro': (context) => RegisterPage(),
         '/home': (context) => const HomePage(),
+        '/reset-password': (context) => const ResetPasswordPage(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
+
