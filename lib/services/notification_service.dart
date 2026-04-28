@@ -1,22 +1,26 @@
-//& Imports packages
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
+  NotificationService._internal();
+
+  static final NotificationService instance = NotificationService._internal();
+
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    final iosInit = DarwinInitializationSettings(
+
+    const iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-    final initSettings = InitializationSettings(
+
+    const initSettings = InitializationSettings(
       android: androidInit,
       iOS: iosInit,
     );
@@ -41,8 +45,7 @@ class NotificationService {
 
     await _notifications
         .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(androidChannel);
   }
 
@@ -51,22 +54,27 @@ class NotificationService {
   }
 
   Future<bool> requestPermissions() async {
-    bool granted = false;
+    if (kIsWeb) return false;
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       final result = await _notifications
           .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
-      granted = result ?? false;
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
-      
-      final status = await Permission.notification.request();
-      granted = status.isGranted;
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+
+      return result ?? false;
     }
 
-    return granted;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final status = await Permission.notification.request();
+      return status.isGranted;
+    }
+
+    return false;
   }
 
   Future<void> showNotification({
@@ -80,7 +88,6 @@ class NotificationService {
       channelDescription: 'Canal para notificações do app de vendas',
       importance: Importance.high,
       priority: Priority.high,
-      ticker: 'ticker',
     );
 
     const iosDetails = DarwinNotificationDetails(

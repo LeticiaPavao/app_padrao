@@ -1,11 +1,10 @@
-//& Imports packages
-import 'package:app_lojinha/utils/extract_error.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/utils/extract_error.dart';
 import 'supabase_service.dart';
 
 class AuthService {
-  final _supabase = SupabaseService().client;
+  final SupabaseClient _supabase = SupabaseService().client;
 
   Future<AuthResponse> signUp({
     required String email,
@@ -19,8 +18,7 @@ class AuthService {
         data: userData,
       );
     } catch (e) {
-      final message = extractSupabaseErrorMessage(e);
-      throw message; 
+      throw extractSupabaseErrorMessage(e);
     }
   }
 
@@ -34,8 +32,7 @@ class AuthService {
         password: password,
       );
     } catch (e) {
-      final message = extractSupabaseErrorMessage(e);
-      throw message;
+      throw extractSupabaseErrorMessage(e);
     }
   }
 
@@ -43,35 +40,29 @@ class AuthService {
     try {
       await _supabase.auth.signOut();
     } catch (e) {
-      final message = extractSupabaseErrorMessage(e);
-      throw message;
+      throw extractSupabaseErrorMessage(e);
+    }
+  }
+
+  Future<void> resetPassword({required String email}) async {
+    try {
+      await _supabase.auth.resetPasswordForEmail(email);
+    } catch (e) {
+      throw extractSupabaseErrorMessage(e);
+    }
+  }
+
+  Future<UserResponse> updateUser({String? email, String? password}) async {
+    try {
+      return await _supabase.auth.updateUser(
+        UserAttributes(email: email, password: password),
+      );
+    } catch (e) {
+      throw extractSupabaseErrorMessage(e);
     }
   }
 
   User? get currentUser => _supabase.auth.currentUser;
 
   Stream<AuthState> get authState => _supabase.auth.onAuthStateChange;
-
-  Future<void> resetPassword({required String email}) async {
-    try {
-      await _supabase.auth.resetPasswordForEmail(email);
-    } catch (e) {
-      final message = extractSupabaseErrorMessage(e);
-      throw message;
-    }
-  }
-
-  Future<UserResponse> updateUser({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      return await _supabase.auth.updateUser(
-        UserAttributes(email: email, password: password),
-      );
-    } catch (e) {
-      final message = extractSupabaseErrorMessage(e);
-      throw message;
-    }
-  }
 }

@@ -1,32 +1,62 @@
-//& Imports packages
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-//& Imports models
+
+import '../models/cart_item.dart';
 import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
-  final List<Product> _itens = [];
+  final List<CartItem> _items = [];
 
-  List<Product> get itens => _itens;
-  double get total => _itens.fold(0, (sum, item) => sum + item.price);
+  List<CartItem> get items => List.unmodifiable(_items);
 
-  void add(Product item) {
-    _itens.add(item);
+  bool get isEmpty => _items.isEmpty;
+
+  double get total {
+    return _items.fold(0, (sum, item) => sum + item.subtotal);
+  }
+
+  int get totalQuantity {
+    return _items.fold(0, (sum, item) => sum + item.quantity);
+  }
+
+  void add(Product product) {
+    final index = _items.indexWhere((item) => item.product.id == product.id);
+
+    if (index >= 0) {
+      _items[index].quantity++;
+    } else {
+      _items.add(CartItem(product: product));
+    }
+
     notifyListeners();
   }
 
-  void remove(Product item) {
-    _itens.remove(item);
+  void removeOne(Product product) {
+    final index = _items.indexWhere((item) => item.product.id == product.id);
+
+    if (index < 0) return;
+
+    if (_items[index].quantity > 1) {
+      _items[index].quantity--;
+    } else {
+      _items.removeAt(index);
+    }
+
+    notifyListeners();
+  }
+
+  void removeAll(Product product) {
+    _items.removeWhere((item) => item.product.id == product.id);
     notifyListeners();
   }
 
   void clear() {
-    _itens.clear();
+    _items.clear();
     notifyListeners();
   }
 
-  Future<void> finishPedido(String userId) async {
-    if (_itens.isEmpty) return;
+  Future<void> finishOrder(String userId) async {
+    if (_items.isEmpty) return;
 
     try {
       final supabase = Supabase.instance.client;
@@ -34,26 +64,23 @@ class CartProvider extends ChangeNotifier {
       final orderResponse = await supabase
           .from('orders')
           .insert({
-            'order_number': 'PED-${DateTime.now().millisecondsSinceEpoch}',
             'user_id': userId,
             'status': 'pending',
             'payment_status': 'pending',
-            'total_amount': total,
           })
           .select('id')
           .single();
 
       final orderId = orderResponse['id'] as String;
 
-      final itemsToInsert = _itens.map((item) {
+      final itemsToInsert = _items.map((item) {
         return {
           'order_id': orderId,
-          'product_id': item.id,
-          'product_name': item.name,
-          'quantity': 1, 
-          'unit_price': item.price,
-          'subtotal':
-              item.price,
+          'product_id': item.product.id,
+          'product_name': item.product.name,
+          'quantity': item.quantity,
+          'unit_price': item.product.price,
+          'subtotal': item.subtotal,
         };
       }).toList();
 
@@ -61,7 +88,7 @@ class CartProvider extends ChangeNotifier {
 
       clear();
     } catch (e) {
-      throw Exception('Erro ao processar pedido. Tente novamente.');
+      throw Exception('Erro ao processar pedido: $e');
     }
   }
 }

@@ -1,17 +1,12 @@
-//& Imports packages
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//& Imports models
-import 'package:app_lojinha/models/product.dart';
-//& Imports widgets
-import 'package:app_lojinha/widgets/product_tile.dart';
-//& Imports providers
-import 'package:app_lojinha/providers/cart_provider.dart';
-//& Imports services
-import 'package:app_lojinha/services/services/product_service.dart';
-//& Imports views
-import 'package:app_lojinha/views/products/register_product_page.dart';
-import 'package:app_lojinha/views/products/update_product_page.dart';
+
+import '../../models/product.dart';
+import '../../providers/cart_provider.dart';
+import '../../services/product_service.dart';
+import '../../widgets/product_tile.dart';
+import 'register_product_page.dart';
+import 'update_product_page.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -21,10 +16,36 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
-  final productService = ProductService();
+  final ProductService _productService = ProductService();
+
   late Future<List<Product>> _futureProducts;
 
-  Future<void> _updateProduct(String productId) async {
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  void _loadProducts() {
+    _futureProducts = _productService.getActiveProducts();
+  }
+
+  Future<void> _refreshProducts() async {
+    setState(_loadProducts);
+  }
+
+  Future<void> _openRegisterProduct() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterProductPage()),
+    );
+
+    if (result == true) {
+      _refreshProducts();
+    }
+  }
+
+  Future<void> _openUpdateProduct(String productId) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -33,16 +54,8 @@ class _ProductsPageState extends State<ProductsPage> {
     );
 
     if (result == true) {
-      setState(() {
-        _futureProducts = productService.getActiveProducts();
-      });
+      _refreshProducts();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _futureProducts = productService.getActiveProducts();
   }
 
   @override
@@ -51,53 +64,54 @@ class _ProductsPageState extends State<ProductsPage> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegisterProductPage(),
-            ),
-          );
-
-          setState(() {
-            _futureProducts = productService.getActiveProducts();
-          });
-        },
+        onPressed: _openRegisterProduct,
         child: const Icon(Icons.add),
       ),
-      body: FutureBuilder<List<Product>>(
-        future: _futureProducts,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum produto encontrado'));
-          }
+      body: RefreshIndicator(
+        onRefresh: _refreshProducts,
+        child: FutureBuilder<List<Product>>(
+          future: _futureProducts,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final products = snapshot.data!;
-          return ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (ctx, index) {
-              return ProductTile(
-                product: products[index],
-                onAdd: () {
-                  cart.add(products[index]);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${products[index].name} adicionado ao cart',
+            if (snapshot.hasError) {
+              return Center(child: Text('Erro: ${snapshot.error}'));
+            }
+
+            final products = snapshot.data ?? [];
+
+            if (products.isEmpty) {
+              return const Center(child: Text('Nenhum produto encontrado'));
+            }
+
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+
+                return ProductTile(
+                  product: product,
+                  onAdd: () {
+                    cart.add(product);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${product.name} adicionado ao carrinho.',
+                        ),
+                        duration: const Duration(seconds: 1),
                       ),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                },
-                onEdit: () => _updateProduct(products[index].id),
-              );
-            },
-          );
-        },
+                    );
+                  },
+                  onEdit: () => _openUpdateProduct(product.id),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -33,43 +33,43 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id:            json['id'] as String,
-      name:          json['name'] as String,
-      price:         (json['price'] as num).toDouble(),
-      description:   json['description'] as String?,
-      imageUrl:      json['image_url'] as String?,
-      category:      json['category'] as String,
-      stock:         json['stock'] as int,
-      expiryDate:    json['expiry_date'] != null
-                      ? DateTime.parse(json['expiry_date'])
-                      : null,
-      supplier:      json['supplier'] as String,
-      weight:        json['weight'] != null
-                      ? (json['weight'] as num).toDouble()
-                      : null,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      price: (json['price'] as num).toDouble(),
+      description: json['description'] as String?,
+      imageUrl: json['image_url'] as String?,
+      category: json['category'] as String,
+      stock: (json['stock'] as num).toInt(),
+      expiryDate: json['expiry_date'] != null
+          ? DateTime.parse(json['expiry_date'] as String)
+          : null,
+      supplier: json['supplier'] as String,
+      weight: json['weight'] != null
+          ? (json['weight'] as num).toDouble()
+          : null,
       unitOfMeasure: json['unit_of_measure'] as String,
-      isActive:      json['is_active'] as bool,
-      createdAt:     DateTime.parse(json['created_at']),
-      updatedAt:     DateTime.parse(json['updated_at']),
+      isActive: json['is_active'] as bool? ?? true,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id':              id,
-      'name':            name,
-      'price':           price,
-      'description':     description,
-      'image_url':       imageUrl,
-      'category':        category,
-      'stock':           stock,
-      'expiry_date':     expiryDate?.toIso8601String(),
-      'supplier':        supplier, 
-      'weight':          weight,
+      'id': id,
+      'name': name,
+      'price': price,
+      'description': description,
+      'image_url': imageUrl,
+      'category': category,
+      'stock': stock,
+      'expiry_date': expiryDate?.toIso8601String(),
+      'supplier': supplier,
+      'weight': weight,
       'unit_of_measure': unitOfMeasure,
-      'is_active':       isActive,
-      'created_at':      createdAt.toIso8601String(),
-      'updated_at':      updatedAt.toIso8601String(),
+      'is_active': isActive,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 }

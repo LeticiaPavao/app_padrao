@@ -1,39 +1,35 @@
-//& Imports packages
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_error_translator_flutter/supabase_error_translator_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_web/webview_flutter_web.dart';
-//& Imports providers
-import 'package:provider/provider.dart';
-import 'package:app_lojinha/providers/auth_provider.dart';
-import 'package:app_lojinha/providers/cart_provider.dart';
-import 'package:app_lojinha/views/auth/reset_password.dart';
-//& Imports views
-import 'home_page.dart';
-import 'package:app_lojinha/views/auth/login_page.dart';
-import 'package:app_lojinha/views/user/cadastro_view.dart';
-//& Imports services
-import 'package:app_lojinha/services/services/notification_service.dart';
 
-void main() async {
+import 'app.dart';
+import 'providers/auth_provider.dart';
+import 'providers/cart_provider.dart';
+import 'services/notification_service.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final NotificationService notificationService = NotificationService();
-  await notificationService.init();
-  await notificationService.requestPermissions();
 
   await dotenv.load();
 
+  final supabaseUrl = dotenv.env['API_URL'];
+  final supabaseKey = dotenv.env['API_KEY'];
+
+  if (supabaseUrl == null || supabaseKey == null) {
+    throw Exception('Configure API_URL e API_KEY no arquivo .env');
+  }
+
   await Supabase.initialize(
-    url: dotenv.env['API_URL']!,
-    anonKey: dotenv.env['API_KEY']!,
+    url: supabaseUrl,
+    anonKey: supabaseKey,
   );
 
-  WebViewPlatform.instance = WebWebViewPlatform();
-
   SupabaseErrorTranslator.setLanguage(SupportedLanguage.pt);
+
+  await NotificationService.instance.init();
+  await NotificationService.instance.requestPermissions();
 
   runApp(
     MultiProvider(
@@ -41,29 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
-      child: const MyApp(),
+      child: const App(),
     ),
   );
 }
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'App de Vendas',
-      locale: const Locale('pt', 'BR'),
-      theme: ThemeData(primarySwatch: Colors.purple),
-      initialRoute: '/home',
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/cadastro': (context) => RegisterPage(),
-        '/home': (context) => const HomePage(),
-        '/reset-password': (context) => const ResetPasswordPage(),
-      },
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-

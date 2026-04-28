@@ -1,6 +1,6 @@
-//& Imports packages
 import 'package:flutter/material.dart';
-//& Imports models
+
+import '../core/utils/format_utils.dart';
 import '../models/product.dart';
 
 class ProductTile extends StatelessWidget {
@@ -20,33 +20,40 @@ class ProductTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        leading: Image.network(
-          product.imageUrl ?? 'https://via.placeholder.com/150',
-          width: 50,
-          height: 50,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              const Icon(Icons.broken_image),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            product.imageUrl ?? 'https://via.placeholder.com/150',
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: 56,
+                height: 56,
+                color: Colors.grey.shade200,
+                child: const Icon(Icons.broken_image),
+              );
+            },
+          ),
         ),
-        title: Text(product.name),
-        subtitle: Text('R\$ ${product.price.toStringAsFixed(2)}'),
+        title: Text(
+          product.name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          '${FormatUtils.formatCurrency(product.price)} • Estoque: ${product.stock}',
+        ),
         trailing: SizedBox(
-          width: 80,
+          width: onEdit == null ? 48 : 96,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                icon: const Icon(Icons.edit), 
-                onPressed: onEdit,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
+              if (onEdit != null)
+                IconButton(icon: const Icon(Icons.edit), onPressed: onEdit),
               IconButton(
                 icon: const Icon(Icons.add_shopping_cart),
-                onPressed: onAdd,
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
+                onPressed: product.stock > 0 ? onAdd : null,
               ),
             ],
           ),

@@ -10,7 +10,7 @@ class Customer {
   final String? zipCode;
   final String? notes;
   final bool isActive;
-  final String? createdBy; 
+  final String? createdBy;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -33,36 +33,36 @@ class Customer {
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
-      id:        json['id'] as String,
-      name:      json['name'] as String,
-      email:     json['email'] as String?,
-      phone:     json['phone'] as String?,
-      document:  json['document'] as String?,
-      address:   json['address'] as String?,
-      city:      json['city'] as String?,
-      state:     json['state'] as String?,
-      zipCode:   json['zip_code'] as String?,
-      notes:     json['notes'] as String?,
-      isActive:  json['is_active'] as bool? ?? true,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      email: json['email'] as String?,
+      phone: json['phone'] as String?,
+      document: json['document'] as String?,
+      address: json['address'] as String?,
+      city: json['city'] as String?,
+      state: json['state'] as String?,
+      zipCode: json['zip_code'] as String?,
+      notes: json['notes'] as String?,
+      isActive: json['is_active'] as bool? ?? true,
       createdBy: json['created_by'] as String?,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id':         id,
-      'name':       name,
-      'email':      email,
-      'phone':      phone,
-      'document':   document,
-      'address':    address,
-      'city':       city,
-      'state':      state,
-      'zip_code':   zipCode,
-      'notes':      notes,
-      'is_active':  isActive,
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'document': document,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip_code': zipCode,
+      'notes': notes,
+      'is_active': isActive,
       'created_by': createdBy,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),

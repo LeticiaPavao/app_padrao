@@ -3,39 +3,40 @@ import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _login() async {
+  Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) return;
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
 
-    final error = await auth.signIn(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
+    final error = await auth.resetPassword(email: _emailController.text.trim());
 
     if (!mounted) return;
 
     if (error == null) {
-      Navigator.pushReplacementNamed(context, '/home');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enviamos um e-mail para redefinir sua senha.'),
+        ),
+      );
+
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(
         context,
@@ -48,22 +49,19 @@ class _LoginPageState extends State<LoginPage> {
     final auth = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Redefinir Senha')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.storefront, size: 80, color: Colors.purple),
-                const SizedBox(height: 16),
                 const Text(
-                  'App Lojinha',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  'Informe seu e-mail para receber as instruções de recuperação de senha.',
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
 
                 TextFormField(
                   controller: _emailController,
@@ -85,24 +83,6 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
-
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Senha',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Campo obrigatório';
-                    }
-
-                    return null;
-                  },
-                ),
                 const SizedBox(height: 20),
 
                 auth.isLoading
@@ -110,24 +90,10 @@ class _LoginPageState extends State<LoginPage> {
                     : SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _login,
-                          child: const Text('Entrar'),
+                          onPressed: _resetPassword,
+                          child: const Text('Enviar recuperação'),
                         ),
                       ),
-
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/cadastro');
-                  },
-                  child: const Text('Não tem conta? Cadastre-se'),
-                ),
-
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/reset-password');
-                  },
-                  child: const Text('Esqueceu sua senha?'),
-                ),
               ],
             ),
           ),

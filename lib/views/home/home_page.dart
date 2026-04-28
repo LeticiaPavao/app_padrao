@@ -1,12 +1,10 @@
-//& Imports packages
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//& Imports providers
-import 'package:app_lojinha/providers/auth_provider.dart';
-//& Imports views
-import 'package:app_lojinha/views/map/map.dart';
-import 'package:app_lojinha/views/cart/cart_page.dart';
-import 'package:app_lojinha/views/products/products_page.dart';
+
+import '../../providers/auth_provider.dart';
+import '../cart/cart_page.dart';
+import '../map/map_page.dart';
+import '../products/products_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,17 +16,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _telas = <Widget>[
+  static const List<Widget> _screens = [
     ProductsPage(),
     CartPage(),
-    Center(child: Text('Perfil (em construção)')),
+    Center(child: Text('Perfil em construção')),
   ];
 
   Future<void> _logout(BuildContext context, AuthProvider auth) async {
     await auth.signOut();
-    if (mounted) {
+
+    if (context.mounted) {
       Navigator.pushReplacementNamed(context, '/login');
     }
+  }
+
+  void _selectScreen(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -38,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('App de Vendas'),
+        title: const Text('App Lojinha'),
         actions: [
           IconButton(
             icon: const Icon(Icons.map),
@@ -61,6 +66,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             if (user != null)
               UserAccountsDrawerHeader(
+                decoration: const BoxDecoration(color: Colors.purple),
                 accountName: Text(user.email ?? 'Usuário'),
                 accountEmail: Text(user.email ?? ''),
                 currentAccountPicture: const CircleAvatar(
@@ -73,17 +79,18 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(color: Colors.purple),
                 child: Center(
                   child: Text(
-                    'App de Vendas',
+                    'App Lojinha',
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 ),
               ),
+
             ListTile(
               leading: const Icon(Icons.shopping_bag),
               title: const Text('Produtos'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _selectedIndex = 0);
+                _selectScreen(0);
               },
             ),
             ListTile(
@@ -91,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Carrinho'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _selectedIndex = 1);
+                _selectScreen(1);
               },
             ),
             ListTile(
@@ -110,7 +117,7 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Perfil'),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _selectedIndex = 2);
+                _selectScreen(2);
               },
             ),
             const Divider(),
@@ -125,10 +132,10 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: IndexedStack(index: _selectedIndex, children: _telas),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: _selectScreen,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
